@@ -3511,6 +3511,10 @@ with pkgs;
 
   libmbim = callPackage ../development/libraries/libmbim { };
 
+  libmed = callPackage ../development/libraries/libmed {
+    stdenv = overrideCC stdenv gcc5;
+  };
+
   libmongo-client = callPackage ../development/libraries/libmongo-client { };
 
   libmesode = callPackage ../development/libraries/libmesode { };
