@@ -1,11 +1,15 @@
-{stdenv, fetchurl, libGLU_combined, tcl, tk, file, libXmu, cmake, libtool, qt4,
+{stdenv, fetchFromGitHub, libGLU_combined, tcl, tk, file, libXmu, cmake, libtool, qt4,
 ftgl, freetype}:
 
 stdenv.mkDerivation rec {
-  name = "opencascade-oce-0.17.2";
-  src = fetchurl {
-    url = https://github.com/tpaviot/oce/archive/OCE-0.17.2.tar.gz;
-    sha256 = "0vpmnb0k5y2f7lpmwx9pg9yfq24zjvnsak5alzacncfm1hv9b6cd";
+  version = "0.18.3";
+  name = "opencascade-${version}";
+
+  src = fetchFromGitHub {
+    owner = "tpaviot";
+    repo = "oce";
+    rev = "OCE-${version}";
+    sha256 = "17wy8dcf44vqisishv1jjf3cmcxyygqq29y9c3wjdj983qi2hsig";
   };
 
   buildInputs = [ libGLU_combined tcl tk file libXmu libtool qt4 ftgl freetype cmake ];
