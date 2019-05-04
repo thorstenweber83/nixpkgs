@@ -1,5 +1,10 @@
-{stdenv, fetchurl}:
-
+{buildPackages, fetchurl}:
+let
+  # always use the build machine's architecture to build binaries
+  # since these are actually only built to be run during
+  # the build process
+  stdenv = buildPackages.stdenv;
+in
 stdenv.mkDerivation rec {
   name = "alsa-firmware-1.0.29";
 
