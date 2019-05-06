@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, ncurses, pcre, fetchpatch }:
+{ stdenv, fetchurl, ncurses, pcre, fetchpatch, buildPackages }:
 
 let
   version = "5.7.1";
@@ -7,6 +7,8 @@ let
     url = "mirror://sourceforge/zsh/zsh-${version}-doc.tar.xz";
     sha256 = "1d1r88n1gfdavx4zy3svl1gljrvzim17jb2r834hafg2a016flrh";
   };
+
+  isCrossBuild = stdenv.buildPlatform != stdenv.hostPlatform;
 
 in
 
@@ -20,6 +22,12 @@ stdenv.mkDerivation {
 
   buildInputs = [ ncurses pcre ];
 
+  # we depend on the build platforms zsh to run zcompile
+  # in postInstall
+  depsBuildBuild = if isCrossBuild then [ buildPackages.zsh ] else [];
+
+  inherit isCrossBuild;
+
   configureFlags = [
     "--enable-maildir-support"
     "--enable-multibyte"
@@ -31,6 +39,10 @@ stdenv.mkDerivation {
   # the zsh/zpty module is not available on hydra
   # so skip groups Y Z
   checkFlags = map (T: "TESTNUM=${T}") (stdenv.lib.stringToCharacters "ABCDEVW");
+
+  # don't run tests in cross build because it involves
+  # running the built binary
+  doCheck = !isCrossBuild;
 
   # XXX: think/discuss about this, also with respect to nixos vs nix-on-X
   postInstall = ''
@@ -61,7 +73,12 @@ else
   fi
 fi
 EOF
-    $out/bin/zsh -c "zcompile $out/etc/zprofile"
+
+    if [ $isCrossBuild ]; then
+      zsh -c "zcompile $out/etc/zprofile"
+    else
+      $out/bin/zsh -c "zcompile $out/etc/zprofile"
+    fi
     mv $out/etc/zprofile $out/etc/zprofile_zwc_is_used
   '';
   # XXX: patch zsh to take zwc if newer _or equal_
