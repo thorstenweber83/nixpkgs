@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, libiconv, recode }:
+{ stdenv, fetchurl, fetchpatch, libiconv, recode, autoreconfHook, buildPackages }:
 
 stdenv.mkDerivation rec {
   name = "enca-${version}";
@@ -10,6 +10,15 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ recode libiconv ];
+
+  patches = [(fetchpatch {
+    url = https://github.com/nijel/enca/commit/2393833d133a6784e57215b89e4c4c0484555985.patch;
+    sha256 = "1m46b7dipph0nk4vfl7kdniyc6g2vjldzi2qxwm4s3r2qr65q4q7";
+  })];
+
+  depsBuildBuild = [ buildPackages.stdenv.cc ];
+
+  nativeBuildInputs = [ autoreconfHook ];
 
   meta = with stdenv.lib; {
     description = "Detects the encoding of text files and reencodes them";
