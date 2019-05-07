@@ -198,6 +198,8 @@ self: super:
   libXi = super.libXi.overrideAttrs (attrs: {
     outputs = [ "out" "dev" "man" "doc" ];
     propagatedBuildInputs = [ self.libXfixes ];
+    configureFlags = attrs.configureFlags or []
+      ++ malloc0ReturnsNullCrossFlag;
   });
 
   libXinerama = super.libXinerama.overrideAttrs (attrs: {
