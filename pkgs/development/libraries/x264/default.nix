@@ -22,7 +22,8 @@ stdenv.mkDerivation rec {
 
   configureFlags = [ "--enable-shared" ]
     ++ stdenv.lib.optional (!stdenv.isi686) "--enable-pic"
-    ++ stdenv.lib.optional (enable10bit) "--bit-depth=10";
+    ++ stdenv.lib.optional (enable10bit) "--bit-depth=10"
+    ++ stdenv.lib.optional (stdenv.buildPlatform != stdenv.hostPlatform) "--cross-prefix=${stdenv.cc.targetPrefix}";
 
   buildInputs = [ yasm ];
 
