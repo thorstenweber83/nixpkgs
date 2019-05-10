@@ -3,7 +3,7 @@
 { stdenv, buildPackages, fetchurl, perl, xz
 
 # we are a dependency of gcc, this simplifies bootstraping
-, interactive ? false, ncurses, procps
+, interactive ? false, ncurses, procps, autoreconfHook
 }:
 
 with stdenv.lib;
@@ -21,7 +21,8 @@ stdenv.mkDerivation rec {
 
   # We need a native compiler to build perl XS extensions
   # when cross-compiling.
-  depsBuildBuild = [ buildPackages.stdenv.cc perl ];
+  depsBuildBuild = [ buildPackages.stdenv.cc perl ]
+    ++ optional (stdenv.buildPlatform != stdenv.hostPlatform) autoreconfHook;
 
   buildInputs = [ xz.bin ]
     ++ optionals stdenv.isSunOS [ libiconv gawk ]
@@ -29,6 +30,10 @@ stdenv.mkDerivation rec {
 
   configureFlags = [ "PERL=${buildPackages.perl}/bin/perl" ]
     ++ stdenv.lib.optional stdenv.isSunOS "AWK=${gawk}/bin/awk";
+
+  postPatch = if stdenv.buildPlatform != stdenv.hostPlatform then ''
+    substituteInPlace Makefile.am --replace "SUBDIRS += info" ""
+  '' else "";
 
   preInstall = ''
     installFlags="TEXMF=$out/texmf-dist";
