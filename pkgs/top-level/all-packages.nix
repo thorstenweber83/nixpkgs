@@ -10924,6 +10924,8 @@ in
 
   xcpretty = callPackage ../development/tools/xcpretty { };
 
+  xmage = callPackage ../games/xmage { };
+
   xmlindent = callPackage ../development/web/xmlindent {};
 
   xpwn = callPackage ../development/mobile/xpwn {};
