@@ -69,6 +69,7 @@
 , "escape-string-regexp"
 , "eslint"
 , "eslint_d"
+, "esy"
 , {"fast-cli": "1.x"}
 , "fkill-cli"
 , "forever"

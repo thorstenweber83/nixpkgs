@@ -39,6 +39,10 @@ let
       meta.broken = since "12";
     };
 
+    esy = super.esy.override {
+      buildInputs = [ pkgs.autoPatchelfHook pkgs.stdenv.cc.cc ];
+    };
+
     bitwarden-cli = pkgs.lib.overrideDerivation super."@bitwarden/cli" (drv: {
       name = "bitwarden-cli-${drv.version}";
     });
